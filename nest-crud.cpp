@@ -11,6 +11,13 @@ namespace fs = std::experimental::filesystem;
 
 #define MAX_SIZE 255
 
+char* capitalize_string(char *str){
+    char *cp_str = (char *)malloc(sizeof(char) * strlen(str));
+    cp_str[0] = std::toupper(str[0]);
+    memcpy(cp_str + 1, str + 1, sizeof(char) * (strlen(str) - 1));
+    return cp_str;
+}
+
 fs::path get_project_directory()
 {
     fs::path current_directory = fs::current_path();
@@ -92,15 +99,10 @@ void create_structure(std::vector<fs::path> &files_path, char *name)
     create_dto(files_path, name, pdir);
 }
 
-void insert_code_to_module(fs::path &path, char *name)
+void insert_code_to_module(fs::path &path, char *name, char* cm_name)
 {   
     std::string path_str = path.string();    
     assert(path_str.find(".module.ts") != std::string::npos);
-    
-    // std::string module_name = name;
-    char cm_name[strlen(name)];
-    cm_name[0] = std::toupper(name[0]);
-    strcat(cm_name, &name[1]);
     
     std::ofstream file(path);
 
@@ -136,14 +138,9 @@ void insert_code_to_module(fs::path &path, char *name)
     file.close();
 }
 
-void insert_code_to_controller(fs::path &path, char *name) {
+void insert_code_to_controller(fs::path &path, char *name, char* cm_name) {
     std::string path_str = path.string();    
     assert(path_str.find(".controller.ts") != std::string::npos);
-    
-    // std::string module_name = name;
-    char cm_name[strlen(name)];
-    cm_name[0] = std::toupper(name[0]);
-    strcat(cm_name, &name[1]);
     
     std::ofstream file(path);
 
@@ -193,15 +190,10 @@ void insert_code_to_controller(fs::path &path, char *name) {
     file.close();
 }
 
-void insert_code_to_service(fs::path &path, char *name)
+void insert_code_to_service(fs::path &path, char *name, char* cm_name)
 {
     std::string path_str = path.string();    
     assert(path_str.find(".service.ts") != std::string::npos);
-    
-    // std::string module_name = name;
-    char cm_name[strlen(name)];
-    cm_name[0] = std::toupper(name[0]);
-    strcat(cm_name, &name[1]);
     
     std::ofstream file(path);
 
@@ -246,15 +238,10 @@ void insert_code_to_service(fs::path &path, char *name)
     file.close();
 }
 
-void insert_code_to_repository(fs::path &path, char *name){
+void insert_code_to_repository(fs::path &path, char *name, char* cm_name){
     std::string path_str = path.string();    
     assert(path_str.find(".repository.ts") != std::string::npos);
-    
-    // std::string module_name = name;
-    char cm_name[strlen(name)];
-    cm_name[0] = std::toupper(name[0]);
-    strcat(cm_name, &name[1]);
-    
+        
     std::ofstream file(path);
 
     std::string entity = (std::string)cm_name + "Entity";
@@ -275,15 +262,11 @@ void insert_code_to_repository(fs::path &path, char *name){
     file.close();
 }
 
-void insert_code_to_entity(fs::path &path, char *name)
+void insert_code_to_entity(fs::path &path, char *name, char *cm_name)
 {
     std::string path_str = path.string();    
     assert(path_str.find(".entity.ts") != std::string::npos);
     
-    // std::string module_name = name;
-    char cm_name[strlen(name)];
-    cm_name[0] = std::toupper(name[0]);
-    strcat(cm_name, &name[1]);
     
     std::ofstream file(path);
 
@@ -305,15 +288,10 @@ void insert_code_to_entity(fs::path &path, char *name)
     file.close();
 }
 
-void insert_code_to_dto(fs::path &path, char *name)
+void insert_code_to_dto(fs::path &path, char *name, char* cm_name)
 {
     std::string path_str = path.string();    
     assert(path_str.find(".dto.ts") != std::string::npos);
-    
-    // std::string module_name = name;
-    char cm_name[strlen(name)];
-    cm_name[0] = std::toupper(name[0]);
-    strcat(cm_name, &name[1]);
     
     std::ofstream file(path);
 
@@ -337,16 +315,17 @@ int main(int argc, char const *argv[])
     for(int i = 1; i < argc; i++)
     {   
         strcpy(module_name, argv[i]);
+        char *cp_module_name = capitalize_string(module_name);
         std::vector<fs::path> files;
         create_structure(files, module_name);
-        insert_code_to_module(files.at(0), module_name);
-        insert_code_to_service(files.at(1), module_name);
-        insert_code_to_controller(files.at(2), module_name);
-        insert_code_to_repository(files.at(3), module_name);
-        insert_code_to_entity(files.at(4), module_name);
-        insert_code_to_dto(files.at(5), module_name);
-        insert_code_to_dto(files.at(6), module_name);
-        insert_code_to_dto(files.at(7), module_name);
+        insert_code_to_module(files.at(0), module_name, cp_module_name);
+        insert_code_to_service(files.at(1), module_name, cp_module_name);
+        insert_code_to_controller(files.at(2), module_name, cp_module_name);
+        insert_code_to_repository(files.at(3), module_name, cp_module_name);
+        insert_code_to_entity(files.at(4), module_name, cp_module_name);
+        insert_code_to_dto(files.at(5), module_name, cp_module_name);
+        insert_code_to_dto(files.at(6), module_name, cp_module_name);
+        insert_code_to_dto(files.at(7), module_name, cp_module_name);
     }
     
     return 0;
